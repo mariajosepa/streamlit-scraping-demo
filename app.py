@@ -30,7 +30,6 @@ Enter an article title and description below. The system will find and rank the 
 with st.form("article_form"):
     title = st.text_input("Article Title")
     description = st.text_area("Article Description")
-    threshold = st.slider("Similarity Threshold", 0.0, 1.0, 0.45, 0.01)
     submitted = st.form_submit_button("Find Matches")
 
 if submitted:
@@ -40,13 +39,9 @@ if submitted:
     similarities = cosine_similarity(article_embedding, consultant_embeddings)[0]
 
     consultant_df['similarity_to_article'] = similarities
-    matches = consultant_df[consultant_df['similarity_to_article'] >= threshold] \
+    matches = consultant_df[consultant_df['similarity_to_article'] >= 0.45] \
         .sort_values(by='similarity_to_article', ascending=False)
 
     st.subheader(f"Top Matches ({len(matches)})")
-
-    # Filter option
-    sort_order = st.radio("Sort by Similarity", ["Descending", "Ascending"], horizontal=True)
-    matches = matches.sort_values(by='similarity_to_article', ascending=(sort_order == "Ascending"))
 
     st.dataframe(matches[['name', 'role', 'email', 'similarity_to_article']].reset_index(drop=True), use_container_width=True)
