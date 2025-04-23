@@ -2,11 +2,18 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import json
+import sys
+import types
+import torch
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+# Fix torch.classes introspection issue with Streamlit
+torch.classes.__path__ = types.SimpleNamespace(_path=[])
+sys.modules['torch.classes'] = torch.classes
+
 # Load model once
-model = SentenceTransformer('all-MiniLM-L6-v2', device='cpu')
+model = SentenceTransformer('./local_model', device='cpu')
 
 # Load consultant data
 @st.cache_data
